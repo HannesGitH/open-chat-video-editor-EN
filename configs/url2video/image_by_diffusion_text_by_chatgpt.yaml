@@ -10,11 +10,11 @@ video_editor:
   tts_gen:
     model: PaddleSpeechTTS
     am: speedyspeech_csmsc
-    lang: zh
+    lang: en
 
   # subtitle 
   subtitle:
-    font: 华文细黑
+    font: roboto
   # text
   text_gen:
     type: URL2TextChatGPTModel

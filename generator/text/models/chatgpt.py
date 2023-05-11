@@ -108,20 +108,6 @@ class URL2TextChatGPTModel(object):
         echo=False,)
         return response.choices[0].text
 
-    def _translate(self,text):
-        prompt = "将以下句子翻译成英文:\n\n" + text +'\n\n1'
-        response = openai.Completion.create(
-        model="text-davinci-003",
-        prompt=prompt,
-        max_tokens=400,
-        stream=False,
-        echo=False,)
-        out_text = response.choices[0].text
-        logger.info('_translate out_text: {}'.format(out_text))
-
-        out_text = out_text.replace('\n','').replace('. ','')
-        
-        return out_text
     def run(self, url):
         texts = get_paragraph_texts(url)
         logger.info('url out texts: {}'.format(texts))
@@ -132,7 +118,7 @@ class URL2TextChatGPTModel(object):
         for s in texts:
             # info = {}
             if len(s) >= 100:
-                prompt = "请将以下内容：{}\n 摘要出30字的短视频文案".format(s)
+                prompt = "Please summarize the following content: {}\n and generate a 30-word short video copy".format(s)
                 response_text = self._ask(prompt)
                 logger.info('response_text: {}'.format(response_text))
                 out_texts.append(response_text)
@@ -143,7 +129,7 @@ class URL2TextChatGPTModel(object):
 
         out_texts = "".join(out_texts)
         logger.info('tmp out_texts: {}'.format(out_texts))
-        prompt = '请根据一下内容{}\n，生成一个100字左右的不含英文的短视频文案'.format(out_texts)
+        prompt = 'Please use the following content to generate a 100-word short video copy: {}'.format(out_texts)
         
         final_text = self._ask(prompt)
         logger.info('final_text: {}'.format(final_text))
@@ -153,14 +139,12 @@ class URL2TextChatGPTModel(object):
         logger.info('sentences: {}'.format(sentences))
         out_info = []
         for s in sentences:
-            en_s = self._translate(s)
             info = {
-                'zh':s,
-                'en':en_s,
+                'en':s,
             }
             out_info.append(info)
             
-        resp['lang'] = 'zh'
+        resp['lang'] = 'en'
         resp["out_text"] = out_info
         return resp
                
